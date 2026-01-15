@@ -1,6 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
-  output   = "../generated/prisma"
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma"
 }
 
 datasource db {
@@ -30,20 +30,20 @@ model barrios {
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
-model caracteristicas {
+model tags {
   id                    BigInt                  @id @default(autoincrement())
   created_at            DateTime                @default(now()) @db.Timestamptz(6)
   nombre                String?                 @db.VarChar
-  caracteristicas_tapas caracteristicas_tapas[]
+  tags_tapas tags_tapas[]
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
-model caracteristicas_tapas {
+model tags_tapas {
   id                BigInt           @id @default(autoincrement())
   created_at        DateTime         @default(now()) @db.Timestamptz(6)
   tapa_id           Int?             @db.SmallInt
   caracteristica_id BigInt?
-  caracteristicas   caracteristicas? @relation(fields: [caracteristica_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  tags   tags? @relation(fields: [caracteristica_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   tapas             tapas?           @relation(fields: [tapa_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
@@ -66,14 +66,14 @@ model tapas {
   id                    Int                     @id @default(autoincrement()) @db.SmallInt
   created_at            DateTime                @default(now()) @db.Timestamptz(6)
   nombre                String                  @db.VarChar
-  precio                Float                   
+  precio                Float
   descripcion           String?                 @db.VarChar
   imagen_url            String?                 @db.VarChar
   vistos                Int?
   puntuacion            Int?
   bar_id                Int                     @db.SmallInt
   categoria_id          Int                     @db.SmallInt
-  caracteristicas_tapas caracteristicas_tapas[]
+  tags_tapas tags_tapas[]
   bares                 bares                   @relation(fields: [bar_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   categorias            categorias              @relation(fields: [categoria_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
