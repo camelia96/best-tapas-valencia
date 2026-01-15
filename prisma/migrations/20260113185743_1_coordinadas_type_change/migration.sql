@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "bares" ALTER COLUMN "coordinadas_latitud" SET DATA TYPE DOUBLE PRECISION,
+ALTER COLUMN "coordinadas_longitud" SET DATA TYPE DOUBLE PRECISION;
