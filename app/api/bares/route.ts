@@ -1,5 +1,6 @@
 import { isValidHttpUrl } from "@/lib/functions";
 import { prisma } from "@/lib/prisma";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/client";
 import { NextRequest, NextResponse } from "next/server";
 import { URL } from "url";
 
@@ -28,71 +29,91 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
 
-    const {
-      nombre,
-      direccion,
-      web_url,
-      coordinadas_latitud,
-      coordinadas_longitud,
-      barrio_id,
-    } = body;
+    const barsProps = [];
 
-    // Validate required properties
-    if (
-      !nombre ||
-      !direccion ||
-      !coordinadas_latitud ||
-      !coordinadas_longitud ||
-      !barrio_id
-    ) {
-      return NextResponse.json({
-        error: "Error creating new data. Property is missing",
-        status: 400,
-      });
+    for (let i = 0; i < body.length; i++) {
+      const {
+        nombre,
+        direccion,
+        web_url,
+        coordinadas_latitud,
+        coordinadas_longitud,
+        barrio_id,
+      } = body[i];
+
+      // Validate required properties
+      if (
+        !(
+          nombre &&
+          direccion &&
+          coordinadas_latitud &&
+          coordinadas_longitud &&
+          barrio_id
+        )
+      ) {
+        throw new TypeError("property is missing");
+      }
+
+      // Validate correct types
+      const parsedLat = Number(coordinadas_latitud);
+      const parsedLong = Number(coordinadas_longitud);
+      const parsedBarrioID = Number(barrio_id);
+
+      if (
+        isNaN(parsedLat) ||
+        isNaN(parsedLong) ||
+        isNaN(parsedBarrioID) ||
+        !(typeof nombre === "string") ||
+        !(typeof direccion === "string")
+      ) {
+        throw new TypeError("Check property type");
+      }
+
+      // Validate correct URL format
+      if (web_url && !isValidHttpUrl(web_url)) {
+        return NextResponse.json({
+          error: "Wrong URL",
+          status: 400,
+        });
+      }
+
+      const barProps = {
+        nombre: nombre,
+        direccion: direccion,
+        web_url: web_url,
+        coordinadas_latitud: parsedLat,
+        coordinadas_longitud: parsedLong,
+        barrio_id: parsedBarrioID,
+      };
+
+      barsProps.push(barProps);
+      console.log(barProps)
     }
 
-    // Validate correct types
-    if (
-      !(typeof coordinadas_latitud === "number") ||
-      !(typeof coordinadas_longitud === "number") ||
-      !(typeof barrio_id === "number") ||
-      !(typeof nombre === "string") ||
-      !(typeof direccion === "string")
-    ) {
-      return NextResponse.json({
-        error: "Error creating new data. Check property type",
-        status: 400,
-      });
-    }
-
-    // Validate correct URL format
-    if (web_url && !isValidHttpUrl(web_url)) {
-      return NextResponse.json({
-        error: "Error creating new data. Wrong URL",
-        status: 400,
-      });
-    }
-
-    const barProps = {
-      nombre: nombre,
-      direccion: direccion,
-      web_url: web_url,
-      coordinadas_latitud: coordinadas_latitud,
-      coordinadas_longitud: coordinadas_longitud,
-      barrio_id: barrio_id,
-    };
-
-    /* const newBar = await prisma.bares.create({ data: barProps }); */
+    const newBars = await prisma.bares.createManyAndReturn({ data: barsProps });
 
     return NextResponse.json({
       status: 201,
       success: true,
-      data: barProps,
+      data: newBars,
     });
-  } catch (e) {
-    return NextResponse.json({
-      error: "Internal Server Error",
+  } catch (error) {
+    console.log(error)
+    // Error handling based on instances
+    const newError = {
+      error: true,
+      message: "Internal Server Error",
       status: 500,
-    });
+    };
+
+    if (error instanceof PrismaClientKnownRequestError) {
+      newError.message =
+        "There was a problem trying to create the record. Check if the entered IDs exist in the database";
+      newError.status = 400;
+    } else if (error instanceof TypeError) {
+      newError.message = "Error creating new data: " + error.message;
+      newError.status = 400;
+    }
+    return NextResponse.json(newError);
   }
 }
