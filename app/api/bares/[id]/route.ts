@@ -8,25 +8,34 @@ export async function GET(
   try {
     const { id } = await params;
 
-    const bar = await prisma.bares.findUnique({ where: { id: parseInt(id) } });
+    const barID = Number(id);
 
-    // No existe bar con id seleccionado
-    if (!bar) {
-      return NextResponse.json({
-        status: 404,
-        error: "Bar no encontrada",
-      });
+    // Validate ID type
+    if (isNaN(barID)) {
+      throw new TypeError("Invalid bar ID type");
     }
 
+    // Find bar
+    const bar = await prisma.bares.findUnique({ where: { id: parseInt(id) } });
+
+    
     return NextResponse.json({
       status: 200,
       success: true,
       data: bar,
     });
   } catch (error) {
-    return NextResponse.json({
+    // Error handling based on instances
+    const newError = {
+      error: true,
+      message: "Internal Server Error",
       status: 500,
-      success: "Internal Server Error",
-    });
+    };
+
+    if (error instanceof TypeError) {
+      newError.message = error.message;
+      newError.status = 400;
+    }
+    return NextResponse.json(newError);
   }
 }
