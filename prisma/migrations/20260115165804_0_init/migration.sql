@@ -23,7 +23,7 @@ CREATE TABLE "barrios" (
 
 -- CreateTable
 CREATE TABLE "tags" (
-    "id" BIGSERIAL NOT NULL,
+    "id" SMALLSERIAL NOT NULL,
     "created_at" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "nombre" VARCHAR,
 
@@ -32,10 +32,10 @@ CREATE TABLE "tags" (
 
 -- CreateTable
 CREATE TABLE "tags_tapas" (
-    "id" BIGSERIAL NOT NULL,
+    "id" SMALLSERIAL NOT NULL,
     "created_at" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "tapa_id" SMALLINT,
-    "caracteristica_id" BIGINT,
+    "tag_id" INTEGER,
 
     CONSTRAINT "tags_tapas_pkey" PRIMARY KEY ("id")
 );
@@ -77,7 +77,7 @@ CREATE TABLE "tapas" (
 ALTER TABLE "bares" ADD CONSTRAINT "bares_barrio_id_fkey" FOREIGN KEY ("barrio_id") REFERENCES "barrios"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 -- AddForeignKey
-ALTER TABLE "tags_tapas" ADD CONSTRAINT "tags_tapas_caracteristica_id_fkey" FOREIGN KEY ("caracteristica_id") REFERENCES "tags"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
+ALTER TABLE "tags_tapas" ADD CONSTRAINT "tags_tapas_tag_id_fkey" FOREIGN KEY ("tag_id") REFERENCES "tags"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 -- AddForeignKey
 ALTER TABLE "tags_tapas" ADD CONSTRAINT "tags_tapas_tapa_id_fkey" FOREIGN KEY ("tapa_id") REFERENCES "tapas"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
