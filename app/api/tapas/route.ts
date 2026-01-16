@@ -2,13 +2,13 @@ import { prisma } from "@/lib/prisma";
 import { PrismaClientValidationError } from "@prisma/client/runtime/client";
 import { NextRequest, NextResponse } from "next/server";
 
-// Read tapa
+// Read tapas and/or search
 export async function GET(req: NextRequest) {
   try {
     const searchParams = req.nextUrl.searchParams;
     const filters: {}[] = [];
 
-    // Filtros dinámicos
+    // Dynamic filters
     searchParams.forEach((value, key) => {
       const trimmedVal = value.trim();
 
@@ -55,4 +55,3 @@ export async function GET(req: NextRequest) {
     );
   }
 }
-
