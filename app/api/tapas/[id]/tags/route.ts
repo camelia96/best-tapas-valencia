@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/client";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
@@ -6,11 +7,18 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const tapaID = (await params).id;
+    const tapaID = Number((await params).id);
 
+    // Validate ID type
+    if (isNaN(tapaID)) {
+      throw new TypeError("Tapa ID not valid");
+    }
+
+    // Find tapas's tags
     const tags_tapas = await prisma.tags_tapas.findMany({
-      where: { tapa_id: parseInt(tapaID) },
+      where: { tapa_id: tapaID },
     });
+
     return NextResponse.json({
       success: true,
       count: 1,
@@ -18,12 +26,18 @@ export async function GET(
       data: tags_tapas,
     });
   } catch (error) {
-    console.log(error);
-
-    return NextResponse.json({
-      error: "Internal Server Error",
+    const newError = {
+      error: true,
+      message: "Internal Server Error",
       status: 500,
-    });
+    };
+
+    if (error instanceof TypeError) {
+      newError.message = error.message;
+      newError.status = 400;
+    }
+
+    return NextResponse.json(newError);
   }
 }
 
@@ -40,25 +54,25 @@ export async function POST(
 
     for (let i = 0; i < body.length; i++) {
       // Get prop from body
-      const tag_id = body[i].tag_id;
+      const tag_id = Number(body[i].tag_id);
 
       // Validate id - required and type
-      if (!(tag_id && typeof tag_id === "number")) {
-        return NextResponse.json({
-          error: "Error creating Tapa tag. Check if the ID exists or its type",
-          status: 400,
-        });
+      if (!tag_id || isNaN(tag_id)) {
+        throw new TypeError(
+          "Error creating Tapa tag. Check if the ID exists or its type"
+        );
       }
 
       // Create prop
       tagsTapas.push({
         tag_id: tag_id,
-        tapa_id: parseInt(tapaID),
+        tapa_id: Number(tapaID),
       });
     }
 
     const tagTapa = await prisma.tags_tapas.createManyAndReturn({
       data: tagsTapas,
+      skipDuplicates: true,
     });
 
     return NextResponse.json({
@@ -67,10 +81,22 @@ export async function POST(
       data: tagTapa,
     });
   } catch (error) {
-    return NextResponse.json({
-      error: "Internal Server Error",
+    // Error handling based on instances
+    const newError = {
+      error: true,
+      message: "Internal Server Error",
       status: 500,
-    });
+    };
+
+    if (error instanceof PrismaClientKnownRequestError) {
+      newError.message =
+        "There was a problem trying to create the record. Check if the IDs exist in the database";
+      newError.status = 400;
+    } else if (error instanceof TypeError) {
+      newError.message = error.message;
+      newError.status = 400;
+    }
+    return NextResponse.json(newError);
   }
 }
 
@@ -79,61 +105,60 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const body = await req.json();
+    // Get tapa ID
+    const tapaID = Number((await params).id);
 
-    const { tag_id } = body;
-
-    const tapaID = parseInt((await params).id);
-
-    // Validate tag id
-    if (tag_id === undefined || tag_id === null) {
-      return NextResponse.json({
-        error: "Tag ID property required",
-        status: 400,
-      });
+    // Validate tapa ID
+    if (isNaN(tapaID)) {
+      throw new TypeError("Tapa ID not valid");
     }
 
-    // Validate tag id type
-    if (isNaN(Number(tag_id))) {
-      return NextResponse.json({
-        error: "Wrong tag ID tyoe. Must be a number",
-        status: 400,
-      });
+    // Get tags to delete
+    const tagsParams = req.nextUrl.searchParams.getAll("tag_id")[0];
+
+    // Validate URL params
+    if (tagsParams === undefined || tagsParams === null) {
+      throw new TypeError("Error: Couldn't delete tags. No URL params.");
     }
 
-    // Find record id
-    const tagTapaToDelete = await prisma.tags_tapas.findFirst({
-      where: {
-        tag_id: tag_id,
-        tapa_id: tapaID,
-      },
+    // Validate tag_ids
+    const tagsIDS = tagsParams.split(",").map((t) => {
+      const parsedTag = Number(t);
+
+      if (isNaN(parsedTag)) {
+        throw new TypeError("Tag ID not valid");
+      }
+
+      return parsedTag;
     });
 
-    // Validate found tapa
-    if (!tagTapaToDelete) {
-      return NextResponse.json({
-        error:
-          "Couldn't delete the tag associated to the current tapa. It does not exist in the database",
-        status: 404,
-      });
-    }
-
-    // Delete tag from tapa
-    const deleteTagTapa = await prisma.tags_tapas.delete({
+    // Delete tags
+    const deletedTagsTapa = await prisma.tags_tapas.deleteMany({
       where: {
-        id: tagTapaToDelete.id,
+        tag_id: {
+          in: tagsIDS,
+        },
+        tapa_id: tapaID,
       },
     });
 
     return NextResponse.json({
       success: true,
-      data: "",
+      data: deletedTagsTapa,
       status: 204,
     });
   } catch (error) {
-    return NextResponse.json({
-      error: "Internal Server Error",
+    // Error handling based on instances
+    const newError = {
+      error: true,
+      message: "Internal Server Error",
       status: 500,
-    });
+    };
+
+    if (error instanceof TypeError) {
+      newError.message = error.message;
+      newError.status = 400;
+    }
+    return NextResponse.json(newError);
   }
 }
