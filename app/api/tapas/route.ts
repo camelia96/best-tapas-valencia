@@ -43,15 +43,17 @@ export async function GET(req: NextRequest) {
       data: tapas,
     });
   } catch (error) {
+    const newError = {
+      error: true,
+      message: "Internal Server Error",
+      status: 500,
+    };
+
     if (error instanceof PrismaClientValidationError) {
-      return NextResponse.json(
-        { error: "Parámetros de búsqueda inválidos" },
-        { status: 400 }
-      );
+      newError.message = "Invalid search params";
+      newError.status = 400;
     }
-    return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 }
-    );
+
+    return NextResponse.json(newError);
   }
 }
