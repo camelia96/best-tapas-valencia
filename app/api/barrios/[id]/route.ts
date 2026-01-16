@@ -1,5 +1,4 @@
 import { prisma } from "@/lib/prisma";
-import { PrismaClientValidationError } from "@prisma/client/runtime/client";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
@@ -9,24 +8,16 @@ export async function GET(
   try {
     const { id } = await params;
 
-    const parsedId = parseInt(id);
+    const barrioID = Number(id);
 
-    // Validar si es numero
-    if (isNaN(parsedId)) {
-      throw new Error();
+    // Validate type
+    if (isNaN(barrioID)) {
+      throw new TypeError("Barrio ID not valid");
     }
 
     const barrio = await prisma.barrios.findUnique({
-      where: { id: parseInt(id) },
+      where: { id: barrioID },
     });
-
-    // ID no existe
-    if (!barrio) {
-      return NextResponse.json({
-        error: "Barrio no encontrado",
-        status: 404,
-      });
-    }
 
     return NextResponse.json({
       status: 200,
@@ -34,9 +25,17 @@ export async function GET(
       data: barrio,
     });
   } catch (error) {
-    return NextResponse.json({
-      error: "Internal Server Error",
+    // Error handling based on instances
+    const newError = {
+      error: true,
+      message: "Internal Server Error",
       status: 500,
-    });
+    };
+
+    if (error instanceof TypeError) {
+      newError.message = error.message;
+      newError.status = 400;
+    }
+    return NextResponse.json(newError);
   }
 }
