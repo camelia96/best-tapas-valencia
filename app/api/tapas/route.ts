@@ -36,12 +36,14 @@ export async function GET(req: NextRequest) {
       orderBy: { id: "asc" },
     });
 
-    return NextResponse.json({
-      status: 200,
-      success: true,
-      count: tapas.length,
-      data: tapas,
-    });
+    return NextResponse.json(
+      {
+        success: true,
+        count: tapas.length,
+        data: tapas,
+      },
+      { status: 200 }
+    );
   } catch (error) {
     const newError = {
       error: true,

@@ -18,12 +18,15 @@ export async function GET(
     // Find bar
     const bar = await prisma.bares.findUnique({ where: { id: parseInt(id) } });
 
-    
-    return NextResponse.json({
-      status: 200,
-      success: true,
-      data: bar,
-    });
+    return NextResponse.json(
+      {
+        success: true,
+        data: bar,
+      },
+      {
+        status: 200,
+      }
+    );
   } catch (error) {
     // Error handling based on instances
     const newError = {

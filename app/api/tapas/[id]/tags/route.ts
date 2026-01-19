@@ -19,12 +19,16 @@ export async function GET(
       where: { tapa_id: tapaID },
     });
 
-    return NextResponse.json({
-      success: true,
-      count: 1,
-      status: 200,
-      data: tags_tapas,
-    });
+    return NextResponse.json(
+      {
+        success: true,
+        count: 1,
+        data: tags_tapas,
+      },
+      {
+        status: 200,
+      }
+    );
   } catch (error) {
     const newError = {
       error: true,
@@ -33,7 +37,7 @@ export async function GET(
     };
 
     if (error instanceof TypeError) {
-      newError.message = error.message;
+      newError.message = "Cannot fetch data: " + error.message;
       newError.status = 400;
     }
 
@@ -58,9 +62,7 @@ export async function POST(
 
       // Validate id - required and type
       if (!tag_id || isNaN(tag_id)) {
-        throw new TypeError(
-          "Error creating Tapa tag. Check if the ID exists or its type"
-        );
+        throw new TypeError("Check if the ID exists or its type");
       }
 
       // Create prop
@@ -93,7 +95,7 @@ export async function POST(
         "There was a problem trying to create the record. Check if the IDs exist in the database";
       newError.status = 400;
     } else if (error instanceof TypeError) {
-      newError.message = error.message;
+      newError.message = "Error creating data: " + error.message;
       newError.status = 400;
     }
     return NextResponse.json(newError);
@@ -118,7 +120,7 @@ export async function DELETE(
 
     // Validate URL params
     if (tagsParams === undefined || tagsParams === null) {
-      throw new TypeError("Error: Couldn't delete tags. No URL params.");
+      throw new TypeError("No URL params.");
     }
 
     // Validate tag_ids
@@ -156,7 +158,7 @@ export async function DELETE(
     };
 
     if (error instanceof TypeError) {
-      newError.message = error.message;
+      newError.message = "Error deleting data: " + error.message;
       newError.status = 400;
     }
     return NextResponse.json(newError);

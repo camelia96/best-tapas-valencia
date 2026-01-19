@@ -8,11 +8,11 @@ export async function GET(req: NextRequest) {
 
   try {
     return NextResponse.json({
-      status: 200,
       success: true,
       count: barrios.length,
       data: barrios,
-    });
+    },{
+      status: 200});
   } catch (error) {
     return NextResponse.json({
       error: "Internal Server Error",

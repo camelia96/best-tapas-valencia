@@ -20,10 +20,10 @@ export async function GET(
     });
 
     return NextResponse.json({
-      status: 200,
       success: true,
       data: barrio,
-    });
+    },{
+      status: 200});
   } catch (error) {
     // Error handling based on instances
     const newError = {
