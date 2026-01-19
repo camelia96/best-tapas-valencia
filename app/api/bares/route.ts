@@ -1,8 +1,18 @@
+import { bares } from "@/generated/prisma/client";
 import { isValidHttpUrl } from "@/lib/functions";
 import { prisma } from "@/lib/prisma";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/client";
 import { NextRequest, NextResponse } from "next/server";
-import { URL } from "url";
+
+type BarCreate = Pick<
+  bares,
+  | "nombre"
+  | "direccion"
+  | "web_url"
+  | "coordinadas_latitud"
+  | "coordinadas_longitud"
+  | "barrio_id"
+>;
 
 // Create bar
 export async function GET(req: NextRequest) {
@@ -11,12 +21,16 @@ export async function GET(req: NextRequest) {
       orderBy: { id: "asc" },
     });
 
-    return NextResponse.json({
-      status: 200,
-      success: true,
-      count: bars.length,
-      data: bars,
-    });
+    return NextResponse.json(
+      {
+        success: true,
+        count: bars.length,
+        data: bars,
+      },
+      {
+        status: 200,
+      }
+    );
   } catch (error) {
     return NextResponse.json({
       error: "Internal Server Error",
@@ -29,7 +43,7 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
 
-    const barsProps = [];
+    const barsProps: BarCreate[] = [];
 
     for (let i = 0; i < body.length; i++) {
       const {
@@ -87,7 +101,6 @@ export async function POST(req: NextRequest) {
       };
 
       barsProps.push(barProps);
-      console.log(barProps)
     }
 
     const newBars = await prisma.bares.createManyAndReturn({ data: barsProps });
@@ -98,7 +111,7 @@ export async function POST(req: NextRequest) {
       data: newBars,
     });
   } catch (error) {
-    console.log(error)
+    console.log(error);
     // Error handling based on instances
     const newError = {
       error: true,
