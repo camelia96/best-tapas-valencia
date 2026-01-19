@@ -1,10 +1,12 @@
 generator client {
-  provider = "prisma-client"
+  provider = "prisma-client-js"
+  previewFeatures = ["fullTextSearchPostgres"]
   output   = "../generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
+  url = env("DATABASE_URL")
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
@@ -58,8 +60,10 @@ model categorias {
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model profiles {
-  id    String  @id @db.Uuid
-  email String? @db.VarChar(256)
+  id    String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  username String @db.VarChar(256)
+  password String @db.VarChar(256)
+
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
@@ -70,8 +74,8 @@ model tapas {
   precio                Float
   descripcion           String?                 @db.VarChar
   imagen_url            String?                 @db.VarChar
-  vistos                Int?
-  puntuacion            Int?
+  vistos                Int?                    @default(0)
+  puntuacion            Int?                    @default(0)
   bar_id                Int                     @db.SmallInt
   categoria_id          Int                     @db.SmallInt
   tags_tapas tags_tapas[]
