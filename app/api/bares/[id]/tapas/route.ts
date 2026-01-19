@@ -1,6 +1,7 @@
 import { tapas } from "@/generated/prisma/client";
 import { isValidHttpUrl } from "@/lib/functions";
 import { prisma } from "@/lib/prisma";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/client";
 import { NextRequest, NextResponse } from "next/server";
 
 type TapaCreate = Pick<
@@ -8,6 +9,45 @@ type TapaCreate = Pick<
   "nombre" | "precio" | "descripcion" | "imagen_url" | "categoria_id" | "bar_id"
 >;
 
+// Read tapas from specific bar
+export async function GET(
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const barID = Number((await params).id);
+
+    // Validate bar ID
+    if (isNaN(barID)) {
+      throw new TypeError("Invalid ID");
+    }
+
+    // Get tapas from bar
+    const tapasBar = await prisma.tapas.findMany({ where: { bar_id: barID } });
+
+    return NextResponse.json({
+      success: true,
+      count: tapasBar.length,
+      data: tapasBar,
+    },{
+      status: 200});
+  } catch (error) {
+    // Error handling based on instances
+    const newError = {
+      error: true,
+      message: "Internal Server Error",
+      status: 500,
+    };
+
+    if (error instanceof TypeError) {
+      newError.message = "Cannot fetch data: " + error.message;
+      newError.status = 400;
+    }
+    return NextResponse.json(newError);
+  }
+}
+
+// Create tapas for specific bar
 export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -20,50 +60,41 @@ export async function POST(
 
     // Validate array of tapas objects
     for (let i = 0; i < body.length; i++) {
-      const nombre = body[i].nombre;
-      const precio = body[i].precio;
-      const descripcion = body[i].descripcion;
-      const imagen_url = body[i].imagen_url;
-      const categoria_id = body[i].categoria_id;
+      const { nombre, precio, descripcion, imagen_url, categoria_id } = body[i];
 
       // Validate required properties
-      if (!nombre || !precio || !categoria_id) {
-        return NextResponse.json({
-          error: "Error creating new data. Property is missing",
-          status: 400,
-        });
+      if (!(nombre && precio && categoria_id)) {
+        throw new TypeError("Property is missing");
       }
+
+      const parsedPrice = Number(precio);
+      const parsedCategoryID = Number(categoria_id);
 
       // Validate property types
       if (
         !(typeof nombre === "string") ||
-        !(typeof precio === "number") ||
         (descripcion && !(typeof descripcion === "string")) ||
-        !(typeof categoria_id === "number")
+        isNaN(parsedPrice) ||
+        isNaN(parsedCategoryID)
       ) {
-        return NextResponse.json({
-          error: "Error creating new data. Check property type",
-          status: 400,
-        });
+        throw new TypeError("Check property type");
       }
 
       // Validate correct URL
       if (imagen_url && !isValidHttpUrl(imagen_url)) {
-        return NextResponse.json({
-          error: "Error creating new data. Wrong URL",
-          status: 400,
-        });
+        throw new TypeError("Wrong URL");
       }
 
       // New object to create
       validatedTapas.push({
         nombre: nombre,
-        precio: precio,
+        precio: parsedPrice,
         descripcion: descripcion,
         imagen_url: imagen_url,
-        categoria_id: categoria_id,
+        categoria_id: parsedCategoryID,
+
         // Add current bar_id from route params
-        bar_id: parseInt(id),
+        bar_id: Number(id),
       });
     }
 
@@ -78,10 +109,21 @@ export async function POST(
       data: newTapas,
     });
   } catch (error) {
-    console.log(error);
-    return NextResponse.json({
-      error: "Internal Server Error",
+    // Error handling based on instances
+    const newError = {
+      error: true,
+      message: "Internal Server Error",
       status: 500,
-    });
+    };
+
+    if (error instanceof PrismaClientKnownRequestError) {
+      newError.message =
+        "There was a problem trying to create the record. Check if the entered IDs exist in the database";
+      newError.status = 400;
+    } else if (error instanceof TypeError) {
+      newError.message = "Error creating new data: " + error.message;
+      newError.status = 400;
+    }
+    return NextResponse.json(newError);
   }
 }
