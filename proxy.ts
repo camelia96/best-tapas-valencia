@@ -11,10 +11,7 @@ export async function proxy(req: NextRequest) {
     const token = req.headers.get("authorization");
 
     if (!token) {
-      return NextResponse.json(
-        { error: "Wrong credentials" },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Wrong credentials" }, { status: 401 });
     }
 
     const authToken = token.split(" ")[1];
@@ -36,7 +33,8 @@ export async function proxy(req: NextRequest) {
   }
 }
 
-// Scope
 export const config = {
-  matcher: ["/((?!api/auth/login|_next/static|_next/image).*)"],
+  matcher: [
+    "/((?!api/auth/login|_next/static|_next/image|favicon.ico|$|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+  ],
 };
