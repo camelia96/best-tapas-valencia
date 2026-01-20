@@ -10,59 +10,59 @@ datasource db {
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
-model bares {
-  id                   Int      @id(map: "bar_pkey") @default(autoincrement()) @db.SmallInt
-  created_at           DateTime @default(now()) @db.Timestamptz(6)
-  nombre               String   @db.VarChar
-  direccion            String?  @db.VarChar
-  web_url              String?  @db.VarChar
-  coordinadas_latitud  Float?
-  coordinadas_longitud Float?
-  barrio_id            Int      @db.SmallInt
-  barrios              barrios  @relation(fields: [barrio_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+model bars {
+  id                   Int                    @id(map: "bar_pkey") @default(autoincrement()) @db.SmallInt
+  created_at           DateTime               @default(now()) @db.Timestamptz(6)
+  name                 String                 @db.VarChar
+  direction            String?                @db.VarChar
+  web_url              String?                @db.VarChar
+  latitude_coord       Float?
+  longitude_coord      Float?
+  area_id              Int                    @db.SmallInt
+  areas                areas                  @relation(fields: [area_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   tapas                tapas[]
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
-model barrios {
-  id         Int      @id @default(autoincrement()) @db.SmallInt
-  created_at DateTime @default(now()) @db.Timestamptz(6)
-  nombre     String   @db.VarChar
-  bares      bares[]
+model areas {
+  id                   Int                     @id @default(autoincrement()) @db.SmallInt
+  created_at           DateTime                @default(now()) @db.Timestamptz(6)
+  name                 String                  @db.VarChar
+  bars                 bars[]
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model tags {
-  id         Int      @id @default(autoincrement()) @db.SmallInt
+  id                    Int                     @id @default(autoincrement()) @db.SmallInt
   created_at            DateTime                @default(now()) @db.Timestamptz(6)
-  nombre                String?                 @db.VarChar
-  tags_tapas tags_tapas[]
+  name                  String?                 @db.VarChar
+  tags_tapas            tags_tapas[]
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model tags_tapas {
-  created_at        DateTime         @default(now()) @db.Timestamptz(6)
-  tapa_id           Int             @db.SmallInt
-  tag_id            Int
-  tags              tags? @relation(fields: [tag_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  tapas             tapas?           @relation(fields: [tapa_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  created_at            DateTime                @default(now()) @db.Timestamptz(6)
+  tapa_id               Int                     @db.SmallInt
+  tag_id                Int
+  tags                  tags?                   @relation(fields: [tag_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  tapas                 tapas?                  @relation(fields: [tapa_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   @@id([tapa_id, tag_id])
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
-model categorias {
-  id         Int      @id @default(autoincrement()) @db.SmallInt
-  created_at DateTime @default(now()) @db.Timestamptz(6)
-  nombre     String   @db.VarChar
-  tapas      tapas[]
+model categories {
+  id                    Int                     @id @default(autoincrement()) @db.SmallInt
+  created_at            DateTime                @default(now()) @db.Timestamptz(6)
+  name                  String                  @db.VarChar
+  tapas                 tapas[]
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model profiles {
-  id    String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  username String @db.VarChar(256)
-  password String @db.VarChar(256)
+  id                    String                   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  username              String                   @db.VarChar(256)
+  password              String                   @db.VarChar(256)
 
 }
 
@@ -70,15 +70,15 @@ model profiles {
 model tapas {
   id                    Int                     @id @default(autoincrement()) @db.SmallInt
   created_at            DateTime                @default(now()) @db.Timestamptz(6)
-  nombre                String                  @db.VarChar
-  precio                Float
-  descripcion           String?                 @db.VarChar
-  imagen_url            String?                 @db.VarChar
-  vistos                Int?                    @default(0)
-  puntuacion            Int?                    @default(0)
+  name                  String                  @db.VarChar
+  price                 Float
+  description           String?                 @db.VarChar
+  image_url             String?                 @db.VarChar
+  views                 Int?                    @default(0)
+  rating                Int?                    @default(0)
   bar_id                Int                     @db.SmallInt
-  categoria_id          Int                     @db.SmallInt
-  tags_tapas tags_tapas[]
-  bares                 bares                   @relation(fields: [bar_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  categorias            categorias              @relation(fields: [categoria_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  category_id           Int                     @db.SmallInt
+  tags_tapas            tags_tapas[]
+  bars                  bars                    @relation(fields: [bar_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  categories            categories              @relation(fields: [category_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
