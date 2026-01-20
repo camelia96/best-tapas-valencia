@@ -8,20 +8,20 @@ export async function GET(
   try {
     const { id } = await params;
 
-    const barrioID = Number(id);
+    const areaID = Number(id);
 
     // Validate type
-    if (isNaN(barrioID)) {
-      throw new TypeError("Barrio ID not valid");
+    if (isNaN(areaID)) {
+      throw new TypeError("Area ID not valid");
     }
 
-    const barrio = await prisma.barrios.findUnique({
-      where: { id: barrioID },
+    const area = await prisma.areas.findUnique({
+      where: { id: areaID },
     });
 
     return NextResponse.json({
       success: true,
-      data: barrio,
+      data: area,
     },{
       status: 200});
   } catch (error) {

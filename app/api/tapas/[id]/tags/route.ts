@@ -22,7 +22,7 @@ export async function GET(
     return NextResponse.json(
       {
         success: true,
-        count: 1,
+        count: tags_tapas.length,
         data: tags_tapas,
       },
       {

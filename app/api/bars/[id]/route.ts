@@ -16,7 +16,7 @@ export async function GET(
     }
 
     // Find bar
-    const bar = await prisma.bares.findUnique({ where: { id: parseInt(id) } });
+    const bar = await prisma.bars.findUnique({ where: { id: parseInt(id) } });
 
     return NextResponse.json(
       {

@@ -65,43 +65,43 @@ export async function PUT(
 
     // Get data to update
     const body = await req.json();
-    const { nombre, precio, descripcion, imagen_url, categoria_id, bar_id } =
+    const { name, price, description, image_url, category_id, bar_id } =
       body;
 
     // Validate non-nullable properties exist
-    if (!(nombre && precio && categoria_id && bar_id)) {
+    if (!(name && price && category_id && bar_id)) {
       throw new TypeError("Property is missing");
     }
 
     // Validate properties type
-    const parsedPrice = Number(precio);
-    const parsedCategoryID = Number(categoria_id);
+    const parsedPrice = Number(price);
+    const parsedCategoryID = Number(category_id);
     const parsedBarID = Number(bar_id);
 
     if (
       isNaN(parsedPrice) ||
       isNaN(parsedCategoryID) ||
       isNaN(parsedBarID) ||
-      !(typeof nombre === "string") ||
-      (descripcion && !(typeof descripcion === "string"))
+      !(typeof name === "string") ||
+      (description && !(typeof description === "string"))
     ) {
       throw new TypeError("Check property type");
     }
 
     // Validate correct URL
-    if (imagen_url && !isValidHttpUrl(imagen_url)) {
+    if (image_url && !isValidHttpUrl(image_url)) {
       throw new TypeError("Wrong URL");
     }
 
     // Update object
     const updatedTapa = await prisma.tapas.update({
       data: {
-        nombre: nombre,
-        descripcion: descripcion,
-        imagen_url: imagen_url,
+        name: name,
+        description: description,
+        image_url: image_url,
         bar_id: parsedBarID,
-        categoria_id: parsedCategoryID,
-        precio: parsedPrice
+        category_id: parsedCategoryID,
+        price: parsedPrice
       },
       where: { id: tapaID },
     });
@@ -148,41 +148,41 @@ export async function PATCH(
     // Get data to update
     const body = await req.json();
 
-    const { nombre, precio, descripcion, imagen_url, categoria_id, bar_id } =
+    const { name, price, description, image_url, category_id, bar_id } =
       body;
 
     // Validate properties type if they exist
-    const parsedPrice = Number(precio);
-    const parsedCategoryID = Number(categoria_id);
+    const parsedPrice = Number(price);
+    const parsedCategoryID = Number(category_id);
     const parsedBarID = Number(bar_id);
 
     if (
-      (precio !== undefined && isNaN(parsedPrice)) ||
-      (categoria_id !== undefined && isNaN(parsedCategoryID)) ||
+      (price !== undefined && isNaN(parsedPrice)) ||
+      (category_id !== undefined && isNaN(parsedCategoryID)) ||
       (bar_id !== undefined && isNaN(parsedBarID)) ||
-      (nombre && !(typeof nombre === "string")) ||
-      (descripcion && !(typeof descripcion === "string"))
+      (name && !(typeof name === "string")) ||
+      (description && !(typeof description === "string"))
     ) {
       throw new TypeError("Check property type");
     }
 
     // Validate correct URL
-    if (imagen_url && !isValidHttpUrl(imagen_url)) {
+    if (image_url && !isValidHttpUrl(image_url)) {
       throw new TypeError("Wrong URL");
     }
 
     // Generate new tapa to update with dynamic props
     const update: TapasUpdate = {};
 
-    if (precio !== undefined) update["precio"] = parsedPrice;
+    if (price !== undefined) update["price"] = parsedPrice;
 
     if (bar_id !== undefined) update["bar_id"] = parsedBarID;
 
-    if (categoria_id !== undefined) update["categoria_id"] = parsedCategoryID;
+    if (category_id !== undefined) update["category_id"] = parsedCategoryID;
 
-    if (nombre !== undefined) update["nombre"] = nombre;
+    if (name !== undefined) update["name"] = name;
 
-    if (descripcion !== undefined) update["descripcion"] = descripcion;
+    if (description !== undefined) update["description"] = description;
 
     // Update object
     const updatedTapa = await prisma.tapas.update({

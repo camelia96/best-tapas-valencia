@@ -3,14 +3,14 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
   try {
-    const categorias = await prisma.categorias.findMany({
+    const categories = await prisma.categories.findMany({
       orderBy: { id: "asc" },
     });
 
     return NextResponse.json({
       success: true,
-      count: categorias.length,
-      data: categorias,
+      count: categories.length,
+      data: categories,
     },{
       status: 200});
   } catch (error) {

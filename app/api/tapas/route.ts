@@ -13,13 +13,13 @@ export async function GET(req: NextRequest) {
       const trimmedVal = value.trim();
 
       switch (key) {
-        case "nombre":
+        case "name":
           filters.push({
-            nombre: { contains: trimmedVal, mode: "insensitive" },
+            name: { contains: trimmedVal, mode: "insensitive" },
           });
           break;
-        case "precio":
-          filters.push({ precio: parseFloat(trimmedVal) });
+        case "price":
+          filters.push({ price: parseFloat(trimmedVal) });
           break;
         default:
           {

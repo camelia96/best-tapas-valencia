@@ -6,7 +6,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 type TapaCreate = Pick<
   tapas,
-  "nombre" | "precio" | "descripcion" | "imagen_url" | "categoria_id" | "bar_id"
+  "name" | "price" | "description" | "image_url" | "category_id" | "bar_id"
 >;
 
 // Read tapas from specific bar
@@ -25,12 +25,16 @@ export async function GET(
     // Get tapas from bar
     const tapasBar = await prisma.tapas.findMany({ where: { bar_id: barID } });
 
-    return NextResponse.json({
-      success: true,
-      count: tapasBar.length,
-      data: tapasBar,
-    },{
-      status: 200});
+    return NextResponse.json(
+      {
+        success: true,
+        count: tapasBar.length,
+        data: tapasBar,
+      },
+      {
+        status: 200,
+      }
+    );
   } catch (error) {
     // Error handling based on instances
     const newError = {
@@ -60,20 +64,20 @@ export async function POST(
 
     // Validate array of tapas objects
     for (let i = 0; i < body.length; i++) {
-      const { nombre, precio, descripcion, imagen_url, categoria_id } = body[i];
+      const { name, price, description, image_url, category_id } = body[i];
 
       // Validate required properties
-      if (!(nombre && precio && categoria_id)) {
+      if (!(name && price && category_id)) {
         throw new TypeError("Property is missing");
       }
 
-      const parsedPrice = Number(precio);
-      const parsedCategoryID = Number(categoria_id);
+      const parsedPrice = Number(price);
+      const parsedCategoryID = Number(category_id);
 
       // Validate property types
       if (
-        !(typeof nombre === "string") ||
-        (descripcion && !(typeof descripcion === "string")) ||
+        !(typeof name === "string") ||
+        (description && !(typeof description === "string")) ||
         isNaN(parsedPrice) ||
         isNaN(parsedCategoryID)
       ) {
@@ -81,17 +85,17 @@ export async function POST(
       }
 
       // Validate correct URL
-      if (imagen_url && !isValidHttpUrl(imagen_url)) {
+      if (image_url && !isValidHttpUrl(image_url)) {
         throw new TypeError("Wrong URL");
       }
 
       // New object to create
       validatedTapas.push({
-        nombre: nombre,
-        precio: parsedPrice,
-        descripcion: descripcion,
-        imagen_url: imagen_url,
-        categoria_id: parsedCategoryID,
+        name: name,
+        price: parsedPrice,
+        description: description,
+        image_url: image_url,
+        category_id: parsedCategoryID,
 
         // Add current bar_id from route params
         bar_id: Number(id),

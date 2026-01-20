@@ -1,23 +1,23 @@
-import { bares } from "@/generated/prisma/client";
+import { bars } from "@/generated/prisma/client";
 import { isValidHttpUrl } from "@/lib/functions";
 import { prisma } from "@/lib/prisma";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/client";
 import { NextRequest, NextResponse } from "next/server";
 
 type BarCreate = Pick<
-  bares,
-  | "nombre"
-  | "direccion"
+  bars,
+  | "name"
+  | "direction"
   | "web_url"
-  | "coordinadas_latitud"
-  | "coordinadas_longitud"
-  | "barrio_id"
+  | "latitude_coord"
+  | "longitude_coord"
+  | "area_id"
 >;
 
 // Create bar
 export async function GET(req: NextRequest) {
   try {
-    const bars = await prisma.bares.findMany({
+    const bars = await prisma.bars.findMany({
       orderBy: { id: "asc" },
     });
 
@@ -47,38 +47,38 @@ export async function POST(req: NextRequest) {
 
     for (let i = 0; i < body.length; i++) {
       const {
-        nombre,
-        direccion,
+        name,
+        direction,
         web_url,
-        coordinadas_latitud,
-        coordinadas_longitud,
-        barrio_id,
+        latitude_coord,
+        longitude_coord,
+        area_id,
       } = body[i];
 
       // Validate required properties
       if (
         !(
-          nombre &&
-          direccion &&
-          coordinadas_latitud &&
-          coordinadas_longitud &&
-          barrio_id
+          name &&
+          direction &&
+          latitude_coord &&
+          longitude_coord &&
+          area_id
         )
       ) {
         throw new TypeError("property is missing");
       }
 
       // Validate correct types
-      const parsedLat = Number(coordinadas_latitud);
-      const parsedLong = Number(coordinadas_longitud);
-      const parsedBarrioID = Number(barrio_id);
+      const parsedLat = Number(latitude_coord);
+      const parsedLong = Number(longitude_coord);
+      const parsedBarrioID = Number(area_id);
 
       if (
         isNaN(parsedLat) ||
         isNaN(parsedLong) ||
         isNaN(parsedBarrioID) ||
-        !(typeof nombre === "string") ||
-        !(typeof direccion === "string")
+        !(typeof name === "string") ||
+        !(typeof direction === "string")
       ) {
         throw new TypeError("Check property type");
       }
@@ -92,18 +92,18 @@ export async function POST(req: NextRequest) {
       }
 
       const barProps = {
-        nombre: nombre,
-        direccion: direccion,
+        name: name,
+        direction: direction,
         web_url: web_url,
-        coordinadas_latitud: parsedLat,
-        coordinadas_longitud: parsedLong,
-        barrio_id: parsedBarrioID,
+        latitude_coord: parsedLat,
+        longitude_coord: parsedLong,
+        area_id: parsedBarrioID,
       };
 
       barsProps.push(barProps);
     }
 
-    const newBars = await prisma.bares.createManyAndReturn({ data: barsProps });
+    const newBars = await prisma.bars.createManyAndReturn({ data: barsProps });
 
     return NextResponse.json({
       status: 201,

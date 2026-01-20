@@ -2,15 +2,15 @@ import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
-  const barrios = await prisma.barrios.findMany({
+  const areas = await prisma.areas.findMany({
     orderBy: { id: "asc" },
   });
 
   try {
     return NextResponse.json({
       success: true,
-      count: barrios.length,
-      data: barrios,
+      count: areas.length,
+      data: areas,
     },{
       status: 200});
   } catch (error) {
