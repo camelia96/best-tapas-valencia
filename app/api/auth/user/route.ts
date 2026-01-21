@@ -13,7 +13,7 @@ export async function GET(req: NextRequest) {
     }
 
     // Get user
-    const user: JwtPayload = { uuid: payload.uuid, username: payload.username };
+    const user: JwtPayload = { uuid: payload.uuid, username: payload.username, iat: payload.iat, exp: payload.iat };
 
     return NextResponse.json(user);
   } catch (error) {
