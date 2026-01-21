@@ -29,7 +29,7 @@ export default function Home() {
         <li className="flex items-center gap-2">
           <SiPostman size={20} />
           <a
-            href="https://web.postman.co/workspace/cf02a57e-03fe-4ce4-993b-f766b6619562/collection/27364724-957ab696-91a6-448d-ba68-ddcbe81f2d7f?action=share&source=copy-link&creator=27364724"
+            href="https://web.postman.co/workspace/API-Best-Tapas-Valencia~cf02a57e-03fe-4ce4-993b-f766b6619562/collection/27364724-957ab696-91a6-448d-ba68-ddcbe81f2d7f?action=share&creator=27364724"
             target="_blank"
             rel="noopener noreferrer"
             className="text-blue-600 hover:underline"
@@ -44,7 +44,7 @@ export default function Home() {
       <p className="text-justify">
         For security reasons, the API is configured with a <span className="font-semibold underline">single test user</span>. The credentials for this user are not exposed publicly, but securely stored inside the Postman collection using collection variables
       </p>
- 
+
       <p className="font-semibold text-justify">Access to protected endpoints is therefore intended to be done via the provided Postman collection.</p>
 
 

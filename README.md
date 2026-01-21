@@ -93,7 +93,7 @@ The collection-level documentation explains authentication and general usage.
 
 [Live DEMO](https://best-tapas-valencia.vercel.app/)
 
-[Postman Collection](https://web.postman.co/workspace/cf02a57e-03fe-4ce4-993b-f766b6619562/collection/27364724-957ab696-91a6-448d-ba68-ddcbe81f2d7f?action=share&source=copy-link&creator=27364724)
+[Postman Collection](https://web.postman.co/workspace/API-Best-Tapas-Valencia~cf02a57e-03fe-4ce4-993b-f766b6619562/collection/27364724-957ab696-91a6-448d-ba68-ddcbe81f2d7f?action=share&creator=27364724)
 
 ---
 ## ✨ Notes
