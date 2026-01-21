@@ -4,16 +4,16 @@ import { SiPostman } from "react-icons/si";
 export default function Home() {
 
   return (
-    <div className="max-w-3xl m-auto p-6 flex flex-col justify-center h-screen text-gray-800 bg-[#EEEEEE] font-mono">
+    <div className="max-w-4xl m-auto px-6 py-20 flex flex-col justify-center text-gray-800 bg-[#EEEEEE] font-mono gap-4">
       <h1 className="text-3xl text-center font-bold mb-6 bg-amber-100 px-8 py-4 rounded-4xl text-amber-500">🥘 Best Tapas Valencia - API</h1>
       <p className="mb-1">
-        This API allows you to manage tapas, bars, along with their categories, tags and areas. 
+        This API allows you to manage tapas, bars, along with their categories, tags and areas.
         Protected endpoints require a valid JWT token.
+        To explore and test all endpoints you may use the <span className="font-semibold">Postman collection</span>.
       </p>
-      <p className="mt-4">To explore and test all endpoints you may use the <span className="font-semibold">Postman collection</span>.</p>
 
       {/** Quick Links */}
-      <h2 className="text-2xl font-semibold mt-6 mb-2">Quick Links</h2>
+      <h2 className="text-2xl font-semibold mt-6 mb-2">🔗 Quick Links</h2>
       <ul className="list-disc list-inside space-y-1">
         <li className="flex items-center gap-2">
           <FaGithub size={20} />
@@ -39,8 +39,21 @@ export default function Home() {
         </li>
       </ul>
 
+      {/** Access Policy */}
+      <h2 className="text-2xl font-semibold mt-6 mb-2">🔒 Access Policy</h2>
+      <p className="text-justify">
+        For security reasons, the API is configured with a <span className="font-semibold underline">single test user</span>. The credentials for this user are not exposed publicly, but securely stored inside the Postman collection using:
+      </p>
+      <ul className="list-disc list-inside space-y-1 my-3">
+        <li>Collection variables</li>
+        <li>Postman Vault (for sensitive values)</li>
+      </ul>
+
+      <p className="font-semibold text-justify">Access to protected endpoints is therefore intended to be done via the provided Postman collection.</p>
+
+
       {/** Endpoints */}
-      <h2 className="text-2xl font-semibold mt-6 mb-2">Endpoints Overview</h2>
+      <h2 className="text-2xl font-semibold mt-6 mb-2">🧩 Endpoints Overview</h2>
       <ul className="list-disc list-inside space-y-1">
         <li>
           <strong>/api/auth/login</strong> - Authenticate and receive a JWT token.
@@ -58,7 +71,7 @@ export default function Home() {
       </ul>
 
       {/** Tech Stack */}
-      <h2 className="text-2xl font-semibold mt-6 mb-2">Tech Stack</h2>
+      <h2 className="text-2xl font-semibold mt-6 mb-2">📦 Tech Stack</h2>
       <ul className="list-disc list-inside space-y-1">
         <li>Next.js (App Router)</li>
         <li>TypeScript</li>
