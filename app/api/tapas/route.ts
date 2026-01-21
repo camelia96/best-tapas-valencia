@@ -12,20 +12,14 @@ export async function GET(req: NextRequest) {
     searchParams.forEach((value, key) => {
       const trimmedVal = value.trim();
 
-      switch (key) {
-        case "name":
-          filters.push({
-            name: { contains: trimmedVal, mode: "insensitive" },
-          });
-          break;
-        case "price":
-          filters.push({ price: parseFloat(trimmedVal) });
-          break;
-        default:
-          {
-            filters.push({ [key]: parseInt(trimmedVal) });
-          }
-          break;
+      if (["name", "description", "image_url"].includes(key)) {
+        filters.push({
+          [key]: { contains: trimmedVal, mode: "insensitive" },
+        });
+      } else if (key === "price") {
+        filters.push({ price: parseFloat(trimmedVal) });
+      } else {
+        filters.push({ [key]: parseInt(trimmedVal) });
       }
     });
 
@@ -46,7 +40,6 @@ export async function GET(req: NextRequest) {
     );
   } catch (error) {
     const newError = {
-      error: true,
       message: "Internal Server Error",
       status: 500,
     };
@@ -56,6 +49,9 @@ export async function GET(req: NextRequest) {
       newError.status = 400;
     }
 
-    return NextResponse.json(newError);
+    return NextResponse.json(
+      { error: true, message: newError.message },
+      { status: newError.status }
+    );
   }
 }
