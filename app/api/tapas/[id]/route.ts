@@ -36,7 +36,6 @@ export async function GET(
   } catch (error) {
     // Error handling based on instances
     const newError = {
-      error: true,
       message: "Internal Server Error",
       status: 500,
     };
@@ -45,7 +44,10 @@ export async function GET(
       newError.message = "Cannot fetch data: " + error.message;
       newError.status = 400;
     }
-    return NextResponse.json(newError);
+    return NextResponse.json(
+      { error: true, message: newError.message },
+      { status: newError.status }
+    );;
   }
 }
 
@@ -118,7 +120,6 @@ export async function PUT(
     console.log(error);
     // Error handling based on instances
     const newError = {
-      error: true,
       message: "Internal Server Error",
       status: 500,
     };
@@ -127,7 +128,10 @@ export async function PUT(
       newError.message = "Error updating data: " + error.message;
       newError.status = 400;
     }
-    return NextResponse.json(newError);
+    return NextResponse.json(
+      { error: true, message: newError.message },
+      { status: newError.status }
+    );;
   }
 }
 
@@ -184,6 +188,8 @@ export async function PATCH(
 
     if (description !== undefined) update["description"] = description;
 
+    if(image_url !== undefined) update["image_url"] = image_url
+
     // Update object
     const updatedTapa = await prisma.tapas.update({
       data: update,
@@ -203,7 +209,6 @@ export async function PATCH(
     console.log(error);
     // Error handling based on instances
     const newError = {
-      error: true,
       message: "Internal Server Error",
       status: 500,
     };
@@ -217,7 +222,10 @@ export async function PATCH(
         "Error updating tapa property or properties: " + error.message;
       newError.status = 400;
     }
-    return NextResponse.json(newError);
+    return NextResponse.json(
+      { error: true, message: newError.message },
+      { status: newError.status }
+    );;
   }
 }
 // Delete single tapa
@@ -249,7 +257,6 @@ export async function DELETE(
   } catch (error) {
     // Error handling based on instances
     const newError = {
-      error: true,
       message: "Internal Server Error",
       status: 500,
     };
@@ -262,6 +269,9 @@ export async function DELETE(
       newError.message = "Error deleting data: " + error.message;
       newError.status = 400;
     }
-    return NextResponse.json(newError);
+    return NextResponse.json(
+      { error: true, message: newError.message },
+      { status: newError.status }
+    );;
   }
 }
