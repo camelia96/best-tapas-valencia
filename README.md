@@ -23,11 +23,7 @@ There is **no frontend required** to use this API. All interactions are done thr
 
 For security reasons, the API is configured with a **single test user**.
 
-The credentials for this user are not exposed publicly, but securely stored inside the Postman collection using:
-
-- Collection variables
-
-- Postman Vault (for sensitive values)
+The credentials for this user are stored inside this collection using collection variables. 
 
 **Access to protected endpoints is therefore intended to be done via the provided Postman collection.**
 
@@ -65,7 +61,7 @@ All protected endpoints require a **valid and non-expired token**.
 
 A [Postman Collection](https://web.postman.co/workspace/cf02a57e-03fe-4ce4-993b-f766b6619562/collection/27364724-957ab696-91a6-448d-ba68-ddcbe81f2d7f?action=share&source=copy-link&creator=27364724) is provided to make testing and reviewing the API easier.
 
-- Once in the ```POST /api/auth/login``` endpoint, the prepared request (with collection variables and vault secrets)  retrieves a JWT from the API.
+- Once in the ```POST /api/auth/login``` endpoint, the prepared request (with collection variables)  retrieves a JWT from the API.
 - A Postman script stores the token as a **collection variable**.
 - All protected requests automatically include the token in the `Authorization` header.
 - No manual setup is required after login.
