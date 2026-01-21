@@ -10,7 +10,7 @@ var jwt = require("jsonwebtoken");
 
 export async function POST(req: NextRequest) {
   const { username, password } = await req.json();
-
+  
   // Find user
   const user = await prisma.profiles.findFirst({
     where: { username: username },
