@@ -5,16 +5,18 @@ export default function Home() {
 
   return (
     <div className="max-w-3xl m-auto p-6 flex flex-col justify-center h-screen text-gray-800 bg-[#EEEEEE] font-mono">
-      <h1 className="text-3xl text-center font-bold mb-4 bg-amber-100 px-8 py-4 rounded-4xl text-amber-500">🥘 Best Tapas Valencia - API</h1>
-      <p className="mb-4">
-        This API allows you to manage tapas, bars, along with their categories, tags and areas. Protected endpoints require a valid JWT token.
-        You can explore and test all endpoints using the Postman collection.
+      <h1 className="text-3xl text-center font-bold mb-6 bg-amber-100 px-8 py-4 rounded-4xl text-amber-500">🥘 Best Tapas Valencia - API</h1>
+      <p className="mb-1">
+        This API allows you to manage tapas, bars, along with their categories, tags and areas. 
+        Protected endpoints require a valid JWT token.
       </p>
+      <p className="mt-4">To explore and test all endpoints you may use the <span className="font-semibold">Postman collection</span>.</p>
 
+      {/** Quick Links */}
       <h2 className="text-2xl font-semibold mt-6 mb-2">Quick Links</h2>
-      <ul className="list-disc list-inside space-y-1 mb-6">
+      <ul className="list-disc list-inside space-y-1">
         <li className="flex items-center gap-2">
-          <FaGithub size={24} />
+          <FaGithub size={20} />
           <a
             href="https://github.com/camelia96/best-tapas-valencia"
             target="_blank"
@@ -25,7 +27,7 @@ export default function Home() {
           </a>
         </li>
         <li className="flex items-center gap-2">
-          <SiPostman size={24} />
+          <SiPostman size={20} />
           <a
             href="https://web.postman.co/workspace/cf02a57e-03fe-4ce4-993b-f766b6619562/collection/27364724-957ab696-91a6-448d-ba68-ddcbe81f2d7f?action=share&source=copy-link&creator=27364724"
             target="_blank"
@@ -37,6 +39,7 @@ export default function Home() {
         </li>
       </ul>
 
+      {/** Endpoints */}
       <h2 className="text-2xl font-semibold mt-6 mb-2">Endpoints Overview</h2>
       <ul className="list-disc list-inside space-y-1">
         <li>
@@ -52,6 +55,17 @@ export default function Home() {
           <strong>/api/categories</strong> - CRUD operations for categories.
         </li>
         ...
+      </ul>
+
+      {/** Tech Stack */}
+      <h2 className="text-2xl font-semibold mt-6 mb-2">Tech Stack</h2>
+      <ul className="list-disc list-inside space-y-1">
+        <li>Next.js (App Router)</li>
+        <li>TypeScript</li>
+        <li>Prisma ORM</li>
+        <li>PostgreSQL (Supabase)</li>
+        <li>JWT (jsonwebtoken)</li>
+        <li>Postman for API testing and documentation</li>
       </ul>
     </div>
   );
