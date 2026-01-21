@@ -57,13 +57,7 @@ export async function POST(req: NextRequest) {
 
       // Validate required properties
       if (
-        !(
-          name &&
-          direction &&
-          latitude_coord &&
-          longitude_coord &&
-          area_id
-        )
+        !(name && direction && latitude_coord && longitude_coord && area_id)
       ) {
         throw new TypeError("property is missing");
       }
@@ -105,16 +99,17 @@ export async function POST(req: NextRequest) {
 
     const newBars = await prisma.bars.createManyAndReturn({ data: barsProps });
 
-    return NextResponse.json({
-      status: 201,
-      success: true,
-      data: newBars,
-    });
+    return NextResponse.json(
+      {
+        success: true,
+        data: newBars,
+      },
+      { status: 201 }
+    );
   } catch (error) {
     console.log(error);
     // Error handling based on instances
     const newError = {
-      error: true,
       message: "Internal Server Error",
       status: 500,
     };
@@ -127,6 +122,9 @@ export async function POST(req: NextRequest) {
       newError.message = "Error creating new data: " + error.message;
       newError.status = 400;
     }
-    return NextResponse.json(newError);
+    return NextResponse.json(
+      { error: true, message: newError.message },
+      { status: newError.status }
+    );;
   }
 }

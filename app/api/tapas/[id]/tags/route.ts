@@ -31,7 +31,6 @@ export async function GET(
     );
   } catch (error) {
     const newError = {
-      error: true,
       message: "Internal Server Error",
       status: 500,
     };
@@ -41,7 +40,10 @@ export async function GET(
       newError.status = 400;
     }
 
-    return NextResponse.json(newError);
+    return NextResponse.json(
+      { error: true, message: newError.message },
+      { status: newError.status }
+    );;
   }
 }
 
@@ -77,15 +79,16 @@ export async function POST(
       skipDuplicates: true,
     });
 
-    return NextResponse.json({
-      status: 201,
-      success: true,
-      data: tagTapa,
-    });
+    return NextResponse.json(
+      {
+        success: true,
+        data: tagTapa,
+      },
+      { status: 201 }
+    );
   } catch (error) {
     // Error handling based on instances
     const newError = {
-      error: true,
       message: "Internal Server Error",
       status: 500,
     };
@@ -98,7 +101,10 @@ export async function POST(
       newError.message = "Error creating data: " + error.message;
       newError.status = 400;
     }
-    return NextResponse.json(newError);
+    return NextResponse.json(
+      { error: true, message: newError.message },
+      { status: newError.status }
+    );;
   }
 }
 
@@ -152,7 +158,6 @@ export async function DELETE(
   } catch (error) {
     // Error handling based on instances
     const newError = {
-      error: true,
       message: "Internal Server Error",
       status: 500,
     };
@@ -161,6 +166,9 @@ export async function DELETE(
       newError.message = "Error deleting data: " + error.message;
       newError.status = 400;
     }
-    return NextResponse.json(newError);
+    return NextResponse.json(
+      { error: true, message: newError.message },
+      { status: newError.status }
+    );;
   }
 }

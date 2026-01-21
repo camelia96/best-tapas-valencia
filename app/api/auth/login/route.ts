@@ -34,10 +34,9 @@ export async function POST(req: NextRequest) {
     { expiresIn: process.env.JWT_EXPIRES_IN! }
   );
 
-  console.log(token)
   if (token) {
     return NextResponse.json({ token: token });
   } else {
-    return NextResponse.json({ error: "Wrong credentials" }, { status: 401 });
+    return NextResponse.json({ error: "Wrong credentialsssss" }, { status: 401 });
   }
 }

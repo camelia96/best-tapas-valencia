@@ -7,16 +7,22 @@ export async function GET(req: NextRequest) {
       orderBy: { id: "asc" },
     });
 
-    return NextResponse.json({
-      success: true,
-      count: categories.length,
-      data: categories,
-    },{
-      status: 200});
+    return NextResponse.json(
+      {
+        success: true,
+        count: categories.length,
+        data: categories,
+      },
+      {
+        status: 200,
+      }
+    );
   } catch (error) {
-    return NextResponse.json({
-      error: "Internal Server Error",
-      status: 500,
-    });
+    return NextResponse.json(
+      {
+        error: "Internal Server Error",
+      },
+      { status: 500 }
+    );
   }
 }

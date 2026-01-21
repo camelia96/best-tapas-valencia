@@ -30,7 +30,6 @@ export async function GET(
   } catch (error) {
     // Error handling based on instances
     const newError = {
-      error: true,
       message: "Internal Server Error",
       status: 500,
     };
@@ -39,6 +38,9 @@ export async function GET(
       newError.message = error.message;
       newError.status = 400;
     }
-    return NextResponse.json(newError);
+    return NextResponse.json(
+      { error: true, message: newError.message },
+      { status: newError.status }
+    );;
   }
 }
