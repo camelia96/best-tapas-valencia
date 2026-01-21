@@ -42,13 +42,9 @@ export default function Home() {
       {/** Access Policy */}
       <h2 className="text-2xl font-semibold mt-6 mb-2">🔒 Access Policy</h2>
       <p className="text-justify">
-        For security reasons, the API is configured with a <span className="font-semibold underline">single test user</span>. The credentials for this user are not exposed publicly, but securely stored inside the Postman collection using:
+        For security reasons, the API is configured with a <span className="font-semibold underline">single test user</span>. The credentials for this user are not exposed publicly, but securely stored inside the Postman collection using collection variables
       </p>
-      <ul className="list-disc list-inside space-y-1 my-3">
-        <li>Collection variables</li>
-        <li>Postman Vault (for sensitive values)</li>
-      </ul>
-
+ 
       <p className="font-semibold text-justify">Access to protected endpoints is therefore intended to be done via the provided Postman collection.</p>
 
 
