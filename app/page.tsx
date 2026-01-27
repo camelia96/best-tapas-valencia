@@ -29,7 +29,7 @@ export default function Home() {
         <li className="flex items-center gap-2">
           <SiPostman size={20} />
           <a
-            href="https://web.postman.co/workspace/API-Best-Tapas-Valencia~cf02a57e-03fe-4ce4-993b-f766b6619562/collection/27364724-957ab696-91a6-448d-ba68-ddcbe81f2d7f?action=share&creator=27364724"
+            href="https://demo-api-btv.postman.co/workspace/API-Best-Tapas-Valencia~cf02a57e-03fe-4ce4-993b-f766b6619562/collection/27364724-957ab696-91a6-448d-ba68-ddcbe81f2d7f?action=share&creator=27364724"
             target="_blank"
             rel="noopener noreferrer"
             className="text-blue-600 hover:underline"
